@@ -63,7 +63,7 @@ int main() {
             Enemy* enemy = &enemies[i];
 
             if (enemy->health > 0) {
-                Enemy_update(enemy);
+                Enemy_update(enemy, deltatime, &player);
             }
         }
 
