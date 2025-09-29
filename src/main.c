@@ -25,6 +25,8 @@ int main() {
         return 1;
     }
 
+    SDL_SetRenderVSync(renderer, 1);
+
 
     // Game initalization
     Sprite background;
@@ -73,16 +75,16 @@ int main() {
         // Rendering
         SDL_RenderClear(renderer);
         Sprite_draw(&background, renderer);
-        Player_draw(&player);
-
+        
         for (size_t i = 0; i < enemyCount; i++) {
             Enemy* enemy = &enemies[i];
-
+            
             if (enemy->health > 0) {
                 Enemy_draw(enemy);
             }
         }
 
+        Player_draw(&player);
         SDL_RenderPresent(renderer);
 
 

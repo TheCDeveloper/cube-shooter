@@ -7,8 +7,8 @@
 typedef struct Player_t {
     Sprite sprite;
 
-    uint32_t health;
-    uint32_t maxHealth;
+    int32_t health;
+    int32_t maxHealth;
 
     float velocityX;
     float velocityY;

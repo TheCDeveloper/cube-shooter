@@ -1,5 +1,8 @@
 #include "player.h"
 #include "sprite.h"
+#include <SDL3/SDL_render.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 
 extern SDL_Renderer* renderer;
@@ -55,6 +58,11 @@ void Player_update(Player* player, double deltatime) {
         return;
     }
 
+    if (player->health < 0) {
+        printf("Player died\n");
+        abort();
+    }
+
     player->sprite.rotation += player->rotation * 200.0f * deltatime;
 
     if (player->sprite.rotation > 360) {
@@ -80,4 +88,24 @@ void Player_draw(Player* player) {
     }
 
     Sprite_draw(&player->sprite, renderer);
+
+    SDL_FRect base = {
+        (player->sprite.display.x - 15),
+        (player->sprite.display.y - 30),
+        80,
+        10
+    };
+
+    SDL_FRect fill = {
+        base.x + 2, base.y + 2,
+        (((float) player->health / player->maxHealth) * base.w) - 4, base.h - 4
+    };
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100);
+    SDL_RenderFillRect(renderer, &base);
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 25, 255);
+    SDL_RenderFillRect(renderer, &fill);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }

@@ -13,6 +13,9 @@ typedef struct Enemy_t {
     uint32_t maxHealth;
 
     uint32_t speed;
+
+    bool debounce;
+    float debounceTime;
 } Enemy;
 
 
