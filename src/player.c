@@ -1,4 +1,5 @@
 #include "player.h"
+#include "bullet.h"
 #include "sprite.h"
 #include <SDL3/SDL_render.h>
 #include <stdlib.h>
@@ -40,6 +41,8 @@ void Player_keyEvent(Player* player, uint32_t type, SDL_Scancode code) {
             player->rotation = -1;
         } else if (code == SDL_SCANCODE_D || code == SDL_SCANCODE_RIGHT) {
             player->rotation = 1;
+        } else if (code == SDL_SCANCODE_SPACE) {
+            Player_shoot(player);
         }
     } else if (type == SDL_EVENT_KEY_UP) {
         if (code == SDL_SCANCODE_W || code == SDL_SCANCODE_UP ||
@@ -50,6 +53,17 @@ void Player_keyEvent(Player* player, uint32_t type, SDL_Scancode code) {
             player->rotation = 0;
         }
     }
+}
+
+
+void Player_shoot(Player *player) {
+    if (!player || player->bulletCount >= 100) {
+        return;
+    }
+
+    player->bulletCount++;
+    Bullet* bullet = &player->bullets[player->bulletCount - 1];
+    Bullet_initialize(bullet, player->sprite.rotation, 1);
 }
 
 
