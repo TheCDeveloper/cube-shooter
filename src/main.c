@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include "player.h"
 #include "enemy.h"
+#include <time.h>
 
 #define MAX_ENEMIES 256
 
@@ -43,10 +44,20 @@ int main() {
     player.sprite.rotation  = 45;
 
 
+    // deltatime
+    uint64_t last = SDL_GetPerformanceCounter();
+    uint64_t freq = SDL_GetPerformanceFrequency();
+
+
     // Game loop
     bool running = true;
 
     while (running) {
+        uint64_t now = SDL_GetPerformanceCounter();
+        float deltatime = (float) (now - last) / freq;
+        last = now;
+
+
         // Game tick
         for (size_t i = 0; i < enemyCount; i++) {
             Enemy* enemy = &enemies[i];
@@ -56,7 +67,7 @@ int main() {
             }
         }
 
-        Player_update(&player, 1.0/60);
+        Player_update(&player, deltatime);
 
 
         // Rendering
