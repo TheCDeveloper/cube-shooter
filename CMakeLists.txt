@@ -9,7 +9,7 @@ find_package(SDL3 REQUIRED CONFIG)
 
 file(GLOB_RECURSE SOURCES src/*.c)
 add_executable(CubeShooter ${SOURCES})
-target_link_libraries(CubeShooter PRIVATE SDL3::SDL3 m)
+target_link_libraries(CubeShooter PRIVATE m SDL3::SDL3)
 
 
 add_custom_command(TARGET CubeShooter POST_BUILD

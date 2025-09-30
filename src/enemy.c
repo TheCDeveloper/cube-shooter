@@ -4,7 +4,6 @@
 #include <SDL3/SDL_render.h>
 #include <math.h>
 #include <time.h>
-#include <stdio.h>
 
 extern SDL_Renderer* renderer;
 
@@ -17,11 +16,12 @@ void Enemy_initialize(Enemy* enemy, uint32_t health, uint32_t speed) {
     Sprite_initialize(&enemy->sprite, renderer, "res/cubes/1.bmp");
     enemy->sprite.display = (SDL_FRect) {0, 0, 50, 50};
 
-    enemy->alive  = true;
+    enemy->alive  = false;
     enemy->health = enemy->maxHealth = health;
     enemy->speed  = speed;
 
-    enemy->debounce = false;
+    enemy->debounce     = false;
+    enemy->debounceTime = 0.0f;
 }
 
 
@@ -35,7 +35,7 @@ void Enemy_update(Enemy* enemy, float deltatime, Player* player) {
     if (enemy->debounce) {
         enemy->debounceTime += deltatime;
 
-        if (enemy->debounceTime > 0.1f) {
+        if (enemy->debounceTime > 0.5f) {
             enemy->debounce = false;
             enemy->debounceTime = 0.0f;
         }
@@ -67,7 +67,6 @@ void Enemy_update(Enemy* enemy, float deltatime, Player* player) {
         if (SDL_HasRectIntersectionFloat(&enemy->sprite.display, &bullet->sprite.display)) {
             bullet->active = false;
             enemy->health -= bullet->damage;
-            printf("Enemy hit\n");
 
             if (enemy->health <= 0) {
                 enemy->alive = false;

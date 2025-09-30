@@ -1,16 +1,14 @@
 #include <SDL3/SDL.h>
-#include "player.h"
-#include "enemy.h"
-#include <time.h>
+#include "level.h"
 
-#define MAX_ENEMIES 256
+#define MAX_ENEMIES 128
 
 
 SDL_Renderer* renderer;
 
 
 int main() {
-    // SDL
+    // SDL Initialization
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "%s", SDL_GetError());
         return 1;
@@ -29,21 +27,8 @@ int main() {
 
 
     // Game initalization
-    Sprite background;
-    Sprite_initialize(&background, renderer, "res/background.bmp");
-    background.display = (SDL_FRect) {0, 0, 800, 450};
-
-    Player player;
-    Player_initialize(&player);
-
-    Enemy enemies[MAX_ENEMIES];
-    size_t enemyCount = 1;
-
-    Enemy_initialize(&enemies[0], 100, 10);
-
-    player.sprite.display.x = 100;
-    player.sprite.display.y = 40;
-    player.sprite.rotation  = 45;
+    Level level;
+    Level_initialize(&level, 4);
 
 
     // deltatime
@@ -61,32 +46,12 @@ int main() {
 
 
         // Game tick
-        for (size_t i = 0; i < enemyCount; i++) {
-            Enemy* enemy = &enemies[i];
-            if (!enemy->alive) {
-                continue;
-            }
-
-            Enemy_update(enemy, deltatime, &player);
-        }
-
-        Player_update(&player, deltatime);
+        Level_tick(&level, deltatime);
 
 
         // Rendering
         SDL_RenderClear(renderer);
-        Sprite_draw(&background, renderer);
-        
-        for (size_t i = 0; i < enemyCount; i++) {
-            Enemy* enemy = &enemies[i];
-            if (!enemy->alive) {
-                continue;
-            }
-            
-            Enemy_draw(enemy);
-        }
-
-        Player_draw(&player);
+        Level_draw(&level);
         SDL_RenderPresent(renderer);
 
 
@@ -95,14 +60,16 @@ int main() {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT) {
                 running = false;
-            } else if (e.type == SDL_EVENT_KEY_DOWN || e.type == SDL_EVENT_KEY_UP) {
-                Player_keyEvent(&player, e.type, e.key.scancode);
             }
+
+            Level_event(&level, &e);
         }
     }
 
 
     // Cleanup
+    Level_deinitialize(&level);
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

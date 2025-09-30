@@ -14,10 +14,8 @@ typedef struct Sprite_t {
 
 
 void Sprite_initialize(Sprite* sprite, SDL_Renderer* renderer, const char* texturepath);
-Sprite* Sprite_create(SDL_Renderer* renderer, const char* texturepath);
-void Sprite_destroy(Sprite* sprite);
+void Sprite_deinitialize(Sprite* sprite);
 
 void Sprite_draw(Sprite* sprite, SDL_Renderer* renderer);
-
 
 #endif // SPRITE_H

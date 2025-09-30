@@ -23,6 +23,7 @@ typedef struct Player_t {
 
 
 void Player_initialize(Player* player);
+void Player_deinitialize(Player* player);
 
 void Player_keyEvent(Player* player, uint32_t type, SDL_Scancode code);
 void Player_shoot(Player* player);
