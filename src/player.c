@@ -61,9 +61,25 @@ void Player_shoot(Player *player) {
         return;
     }
 
+    Bullet* bullet = &player->bullets[player->bulletCount];
+
+    for (size_t i = 0; i < player->bulletCount; i++) {
+        if (!player->bullets[i].active) {
+            bullet = &player->bullets[i];
+            bullet->sprite.display.x = player->sprite.display.x;
+            bullet->sprite.display.y = player->sprite.display.y;
+            bullet->sprite.rotation  = player->sprite.rotation;
+            bullet->active = true;
+
+            printf("Reused slot %u\n", i);
+            return;
+        }
+    }
+
+    Bullet_initialize(bullet, player->sprite.display.x, player->sprite.display.y, player->sprite.rotation, 1);
+    bullet->active = true;
+
     player->bulletCount++;
-    Bullet* bullet = &player->bullets[player->bulletCount - 1];
-    Bullet_initialize(bullet, player->sprite.rotation, 1);
 }
 
 
@@ -93,6 +109,15 @@ void Player_update(Player* player, double deltatime) {
 
     player->velocityX -= player->velocityX * deltatime;
     player->velocityY -= player->velocityY * deltatime;
+
+
+    for (size_t i = 0; i < player->bulletCount; i++) {
+        if (!player->bullets[i].active) {
+            continue;
+        }
+
+        Bullet_update(&player->bullets[i], deltatime);
+    }
 }
 
 
@@ -101,8 +126,20 @@ void Player_draw(Player* player) {
         return;
     }
 
+
+    // Sprite
+    for (size_t i = 0; i < player->bulletCount; i++) {
+        if (!player->bullets[i].active) {
+            continue;
+        }
+
+        Sprite_draw(&player->bullets[i].sprite, renderer);
+    }
+
     Sprite_draw(&player->sprite, renderer);
 
+
+    // Healthbar
     SDL_FRect base = {
         (player->sprite.display.x - 15),
         (player->sprite.display.y - 30),

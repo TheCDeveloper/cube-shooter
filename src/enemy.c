@@ -17,6 +17,7 @@ void Enemy_initialize(Enemy* enemy, uint32_t health, uint32_t speed) {
     Sprite_initialize(&enemy->sprite, renderer, "res/cubes/1.bmp");
     enemy->sprite.display = (SDL_FRect) {0, 0, 50, 50};
 
+    enemy->alive  = true;
     enemy->health = enemy->maxHealth = health;
     enemy->speed  = speed;
 
@@ -29,6 +30,8 @@ void Enemy_update(Enemy* enemy, float deltatime, Player* player) {
         return;
     }
 
+
+    // Attack
     if (enemy->debounce) {
         enemy->debounceTime += deltatime;
 
@@ -50,6 +53,26 @@ void Enemy_update(Enemy* enemy, float deltatime, Player* player) {
         enemy->debounce = true;
         enemy->debounceTime = 0.0f;
         player->health -= 1;
+    }
+
+
+    // Bullet damage
+    for (size_t i = 0; i < player->bulletCount; i++) {
+        Bullet* bullet = &player->bullets[i];
+
+        if (!bullet->active) {
+            continue;
+        }
+
+        if (SDL_HasRectIntersectionFloat(&enemy->sprite.display, &bullet->sprite.display)) {
+            bullet->active = false;
+            enemy->health -= bullet->damage;
+            printf("Enemy hit\n");
+
+            if (enemy->health <= 0) {
+                enemy->alive = false;
+            }
+        }
     }
 }
 

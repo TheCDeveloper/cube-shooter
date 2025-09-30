@@ -63,10 +63,11 @@ int main() {
         // Game tick
         for (size_t i = 0; i < enemyCount; i++) {
             Enemy* enemy = &enemies[i];
-
-            if (enemy->health > 0) {
-                Enemy_update(enemy, deltatime, &player);
+            if (!enemy->alive) {
+                continue;
             }
+
+            Enemy_update(enemy, deltatime, &player);
         }
 
         Player_update(&player, deltatime);
@@ -78,10 +79,11 @@ int main() {
         
         for (size_t i = 0; i < enemyCount; i++) {
             Enemy* enemy = &enemies[i];
-            
-            if (enemy->health > 0) {
-                Enemy_draw(enemy);
+            if (!enemy->alive) {
+                continue;
             }
+            
+            Enemy_draw(enemy);
         }
 
         Player_draw(&player);

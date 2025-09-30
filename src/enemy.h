@@ -2,11 +2,13 @@
 #define ENEMY_H
 
 #include "sprite.h"
+#include <stdbool.h>
 
 typedef struct Player_t Player;
 
 
 typedef struct Enemy_t {
+    bool alive;
     Sprite sprite;
 
     uint32_t health;
