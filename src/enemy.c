@@ -8,13 +8,18 @@
 extern SDL_Renderer* renderer;
 
 
-void Enemy_initialize(Enemy* enemy, uint32_t health, uint32_t speed) {
+void Enemy_initialize(Enemy* enemy, int windowWidth, int windowHeight, uint32_t health, uint32_t speed) {
     if (!enemy) {
         return;
     }
 
+
+    float scaleX = (float) windowWidth / 1280.0f;
+    float scaleY = (float) windowHeight / 720.0f;
+    float scale  = scaleX > scaleY ? scaleX : scaleY;
+
     Sprite_initialize(&enemy->sprite, renderer, "res/cubes/1.bmp");
-    enemy->sprite.display = (SDL_FRect) {0, 0, 50, 50};
+    enemy->sprite.display = (SDL_FRect) {0, 0, 64 * scale, 64 * scale};
 
     enemy->alive  = false;
     enemy->health = enemy->maxHealth = health;
@@ -22,6 +27,27 @@ void Enemy_initialize(Enemy* enemy, uint32_t health, uint32_t speed) {
 
     enemy->debounce     = false;
     enemy->debounceTime = 0.0f;
+}
+
+
+void Enemy_resizeEvent(Enemy *enemy, int oldWidth, int oldHeight, int newWidth, int newHeight) {
+    if (!enemy) {
+        return;
+    }
+
+
+    float scaleX = (float) newWidth  / 1280.0f;
+    float scaleY = (float) newHeight / 720.0f;
+    float scale  = (scaleX > scaleY) ? scaleX : scaleY;
+
+    float oldX = enemy->sprite.display.x;
+    float oldY = enemy->sprite.display.y;
+
+    SDL_FRect* display = &enemy->sprite.display;
+
+    display->w = display->h = 64 * scale;
+    display->x = (((oldX + (display->w / 2.0f)) / oldWidth) * newWidth) - ((64 * scale) / 2.0f);
+    display->y = (((oldY + (display->h / 2.0f)) / oldHeight) * newHeight) - ((64 * scale) / 2.0f);
 }
 
 

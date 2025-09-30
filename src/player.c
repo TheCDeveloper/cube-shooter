@@ -1,5 +1,6 @@
 #include "player.h"
 #include "bullet.h"
+#include "sprite.h"
 #include <SDL3/SDL_render.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,13 +9,21 @@
 extern SDL_Renderer* renderer;
 
 
-void Player_initialize(Player *player) {
+void Player_initialize(Player *player, int windowWidth, int windowHeight) {
     if (!player || !renderer) {
         return;
     }
 
+
+    player->windowWidth  = windowWidth;
+    player->windowHeight = windowHeight;
+
+    float scaleX = (float) windowWidth / 1280.0f;
+    float scaleY = (float) windowHeight / 720.0f;
+    float scale  = scaleX > scaleY ? scaleX : scaleY;
+
     Sprite_initialize(&player->sprite, renderer, "res/player.bmp");
-    player->sprite.display = (SDL_FRect) {0, 0, 50, 50};
+    player->sprite.display = (SDL_FRect) {0, 0, 64 * scale, 64 * scale};
 
     player->health = player->maxHealth = 100;
 
@@ -72,6 +81,27 @@ void Player_keyEvent(Player* player, uint32_t type, SDL_Scancode code) {
 }
 
 
+void Player_resizeEvent(Player *player, int oldWidth, int oldHeight, int newWidth, int newHeight) {
+    if (!player) {
+        return;
+    }
+
+
+    float scaleX = (float) newWidth  / 1280.0f;
+    float scaleY = (float) newHeight / 720.0f;
+    float scale  = (scaleX > scaleY) ? scaleX : scaleY;
+
+    float oldX = player->sprite.display.x;
+    float oldY = player->sprite.display.y;
+
+    SDL_FRect* display = &player->sprite.display;
+
+    display->w = display->h = 64 * scale;
+    display->x = (((oldX + (display->w / 2.0f)) / oldWidth) * newWidth) - ((64 * scale) / 2.0f);
+    display->y = (((oldY + (display->h / 2.0f)) / oldHeight) * newHeight) - ((64 * scale) / 2.0f);
+}
+
+
 void Player_shoot(Player *player) {
     if (!player || player->bulletCount >= 100) {
         return;
@@ -83,16 +113,14 @@ void Player_shoot(Player *player) {
     for (size_t i = 0; i < player->bulletCount; i++) {
         if (!player->bullets[i].active) {
             bullet = &player->bullets[i];
-            bullet->sprite.display.x = player->sprite.display.x;
-            bullet->sprite.display.y = player->sprite.display.y;
-            bullet->sprite.rotation  = player->sprite.rotation;
+            Sprite_deinitialize(&bullet->sprite);
+            Bullet_initialize(bullet, player->windowWidth, player->windowHeight, player->sprite.display.x, player->sprite.display.y, player->sprite.rotation, 1);
             bullet->active = true;
-
             return;
         }
     }
 
-    Bullet_initialize(bullet, player->sprite.display.x, player->sprite.display.y, player->sprite.rotation, 1);
+    Bullet_initialize(bullet, player->windowWidth, player->windowHeight, player->sprite.display.x, player->sprite.display.y, player->sprite.rotation, 1);
     bullet->active = true;
     player->bulletCount++;
 }
@@ -161,18 +189,18 @@ void Player_draw(Player* player) {
 
     // Healthbar
     SDL_FRect base = {
-        (player->sprite.display.x - 15),
-        (player->sprite.display.y - 30),
-        80,
-        10
+        player->sprite.display.x,
+        (player->sprite.display.y - (player->sprite.display.w * 0.2f)) - (player->sprite.display.w * 0.2f),
+        player->sprite.display.w,
+        player->sprite.display.h * 0.2f
     };
 
     SDL_FRect fill = {
-        base.x + 2, base.y + 2,
-        (((float) player->health / player->maxHealth) * base.w) - 4, base.h - 4
+        base.x + (player->sprite.display.w * 0.05f), base.y + (player->sprite.display.w * 0.05f),
+        (((float) player->health / player->maxHealth) * base.w) - (player->sprite.display.w * 0.1f), base.h - (player->sprite.display.w * 0.1f)
     };
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &base);
 
     SDL_SetRenderDrawColor(renderer, 0, 255, 25, 255);

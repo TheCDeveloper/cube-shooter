@@ -6,6 +6,8 @@
 
 
 typedef struct Player_t {
+    int windowWidth;
+    int windowHeight;
     Sprite sprite;
 
     int32_t health;
@@ -22,10 +24,11 @@ typedef struct Player_t {
 } Player;
 
 
-void Player_initialize(Player* player);
+void Player_initialize(Player* player, int windowWidth, int windowHeight);
 void Player_deinitialize(Player* player);
 
 void Player_keyEvent(Player* player, uint32_t type, SDL_Scancode code);
+void Player_resizeEvent(Player *player, int oldWidth, int oldHeight, int newWidth, int newHeight);
 void Player_shoot(Player* player);
 
 void Player_update(Player* player, double deltatime);
