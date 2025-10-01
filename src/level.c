@@ -1,31 +1,27 @@
 #include "level.h"
 #include "enemy.h"
 #include "player.h"
-#include <SDL3/SDL_events.h>
 #include <stdlib.h>
 
 
 extern SDL_Renderer* renderer;
 
 
-void Level_initialize(Level *level, int windowWidth, int windowHeight, uint8_t enemies) {
+void Level_initialize(Level *level, uint8_t enemies) {
     if (!level) {
         return;
     }
 
 
-    level->windowWidth  = windowWidth;
-    level->windowHeight = windowHeight;
-
-    Player_initialize(&level->player, level->windowWidth, level->windowHeight);
+    Player_initialize(&level->player);
     Sprite_initialize(&level->background, renderer, "res/background.bmp");
-    level->background.display = (SDL_FRect) {0, 0, level->windowWidth, level->windowHeight};
+    level->background.display = (SDL_FRect) {0, 0, 800, 450};
     
     level->enemyCount  = enemies;
     level->enemiesLeft = enemies;
 
     for (size_t i = 0; i < 255; i++) {
-        Enemy_initialize(&level->enemies[i], level->windowWidth, level->windowHeight, 0, 0);
+        Enemy_initialize(&level->enemies[i], 0, 0);
 
         if (i < enemies) {
             level->enemies[i].alive  = true;
@@ -60,25 +56,6 @@ void Level_event(Level *level, SDL_Event *event) {
 
 
     Player_keyEvent(&level->player, event->type, event->key.scancode);
-
-    if (event->type == SDL_EVENT_WINDOW_RESIZED) {
-        level->background.display.w = event->window.data1;
-        level->background.display.h = event->window.data2;
-
-        Player_resizeEvent(&level->player, level->windowWidth, level->windowHeight, event->window.data1, event->window.data2);
-
-        for (size_t i = 0; i < level->enemyCount; i++) {
-            if (!level->enemies[i].alive) {
-                continue;
-            }
-
-            Enemy* e = &level->enemies[i];
-            Enemy_resizeEvent(e, level->windowWidth, level->windowHeight, event->window.data1, event->window.data2);
-        }
-        
-        level->windowWidth = event->window.data1;
-        level->windowHeight = event->window.data2;
-    }
 }
 
 

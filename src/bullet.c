@@ -6,17 +6,14 @@
 extern SDL_Renderer* renderer;
 
 
-void Bullet_initialize(Bullet *bullet, int w, int h, float x, float y, float rotation, uint32_t damage) {
+void Bullet_initialize(Bullet *bullet, float x, float y, float rotation, uint32_t damage) {
     if (!bullet) {
         return;
     }
-
-    float scaleX = (float) w / 1280.0f;
-    float scaleY = (float) h / 720.0f;
-    float scale  = scaleX > scaleY ? scaleX : scaleY;
+    
 
     Sprite_initialize(&bullet->sprite, renderer, "res/bullet.bmp");
-    bullet->sprite.display = (SDL_FRect) {x, y, 32 * scale, 32 * scale};
+    bullet->sprite.display = (SDL_FRect) {x, y, 25, 25};
     bullet->sprite.rotation = rotation;
 
     bullet->active = true;

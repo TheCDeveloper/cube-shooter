@@ -8,9 +8,6 @@
 
 
 typedef struct Level_t {
-    int windowWidth;
-    int windowHeight;
-
     Player player;
     Sprite background;
 
@@ -20,7 +17,7 @@ typedef struct Level_t {
 } Level;
 
 
-void Level_initialize(Level* level, int windowWidth, int windowHeight, uint8_t enemies);
+void Level_initialize(Level* level, uint8_t enemies);
 void Level_deinitialize(Level* level);
 
 void Level_event(Level* level, SDL_Event* event);

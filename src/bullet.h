@@ -13,7 +13,7 @@ typedef struct Bullet_t {
 } Bullet;
 
 
-void Bullet_initialize(Bullet* bullet, int windowWidth, int windowHeight, float x, float y, float rotation, uint32_t damage);
+void Bullet_initialize(Bullet* bullet, float x, float y, float rotation, uint32_t damage);
 
 void Bullet_update(Bullet* bullet, float deltatime);
 
