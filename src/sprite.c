@@ -1,15 +1,38 @@
 #include "sprite.h"
 
 
+typedef struct {
+    SDL_Texture* texture;
+    char path[128];
+} TextureEntry;
+
+static TextureEntry cache[8];
+static size_t cacheCount = 0;
+
+
 void Sprite_initialize(Sprite *sprite, SDL_Renderer* renderer, const char *texturepath) {
     if (!sprite || !renderer || !texturepath) {
         return;
     }
 
 
-    SDL_Surface* surf = SDL_LoadBMP(texturepath);
-    SDL_Texture* text = SDL_CreateTextureFromSurface(renderer, surf);
-    SDL_DestroySurface(surf);
+    SDL_Texture* text = NULL;
+
+    for (size_t i = 0; i < cacheCount; i++) {
+        if (strcmp(texturepath, cache[i].path) == 0) {
+            text = cache[i].texture;
+        }
+    }
+
+    if (text == NULL) {
+        SDL_Surface* surf = SDL_LoadBMP(texturepath);
+        text = SDL_CreateTextureFromSurface(renderer, surf);
+        SDL_DestroySurface(surf);
+
+        cache[cacheCount++] = (TextureEntry) {text, ""};
+        strncpy(cache[cacheCount - 1].path, texturepath, 127);
+    }
+
 
     float w, h;
     SDL_GetTextureSize(text, &w, &h);

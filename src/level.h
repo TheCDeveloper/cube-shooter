@@ -11,6 +11,7 @@ typedef struct Level_t {
     Player player;
     Sprite background;
 
+    uint8_t round;
     Enemy enemies[255];
     uint8_t enemyCount;
     uint8_t enemiesLeft;

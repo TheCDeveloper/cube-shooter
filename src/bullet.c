@@ -13,7 +13,7 @@ void Bullet_initialize(Bullet *bullet, float x, float y, float rotation, uint32_
     
 
     Sprite_initialize(&bullet->sprite, renderer, "res/bullet.bmp");
-    bullet->sprite.display = (SDL_FRect) {x, y, 25, 25};
+    bullet->sprite.display = (SDL_FRect) {x, y, 32, 32};
     bullet->sprite.rotation = rotation;
 
     bullet->active = true;
@@ -31,8 +31,8 @@ void Bullet_update(Bullet* bullet, float deltatime) {
     bullet->sprite.display.y += sin(bullet->sprite.rotation * (M_PI / 180.0f)) * 250.0f * deltatime;
 
     // Delete bullet if out of bounds
-    if (bullet->sprite.display.x < -25 || bullet->sprite.display.x > 800 ||
-        bullet->sprite.display.y < -25 || bullet->sprite.display.y > 450) {
+    if (bullet->sprite.display.x < -32 || bullet->sprite.display.x > 1280 ||
+        bullet->sprite.display.y < -32 || bullet->sprite.display.y > 720) {
         bullet->active = false;
     }
 }

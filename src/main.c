@@ -15,7 +15,7 @@ int main() {
     }
 
     SDL_Window* window;
-    SDL_CreateWindowAndRenderer("Cube shooter", 800, 450, SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer);
+    SDL_CreateWindowAndRenderer("Cube shooter", 1280, 720, SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer);
 
     if (!window || !renderer) {
         SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "%s", SDL_GetError());

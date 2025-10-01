@@ -14,7 +14,7 @@ void Player_initialize(Player *player) {
     }
 
     Sprite_initialize(&player->sprite, renderer, "res/player.bmp");
-    player->sprite.display = (SDL_FRect) {0, 0, 50, 50};
+    player->sprite.display = (SDL_FRect) {0, 0, 64, 64};
 
     player->health = player->maxHealth = 100;
 
@@ -92,7 +92,11 @@ void Player_shoot(Player *player) {
         }
     }
 
-    Bullet_initialize(bullet, player->sprite.display.x, player->sprite.display.y, player->sprite.rotation, 1);
+    Bullet_initialize(bullet,
+                      player->sprite.display.x + 16,
+                      player->sprite.display.y + 16,
+                      player->sprite.rotation,
+                      1);
     bullet->active = true;
     player->bulletCount++;
 }
@@ -101,11 +105,6 @@ void Player_shoot(Player *player) {
 void Player_update(Player* player, double deltatime) {
     if (!player) {
         return;
-    }
-
-    if (player->health < 0) {
-        printf("Player died 💀\nThe Game will now crash.\n");
-        abort();
     }
 
 
@@ -163,7 +162,7 @@ void Player_draw(Player* player) {
     SDL_FRect base = {
         (player->sprite.display.x - 15),
         (player->sprite.display.y - 30),
-        80,
+        94,
         10
     };
 
